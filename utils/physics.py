@@ -27,7 +27,7 @@ def cartesian(angle, distance):
     return x, y
 
 def acute_diff(p1, p2):
-    """Given p1 and p2 in the range 0 to 360, return acute angle difference."""
+    """Given p1 and p2 in the range 0 to 360, return acute angle difference"""
     d1 = max(p1,p2) - min(p1,p2)
     d2 = min(p1,p2) - max(p1,p2) + 360
     return min(d1, d2)
@@ -50,14 +50,31 @@ class Ball(object):
         self.y += (self.velocity * math.sin(math.radians(self.angle)))
         self.velocity *= self.game.friction
 
-    def bounce(self, line):  # Returns angle of bounce
-        colpoint = self.get_collision_point(line)
+    async def get_closest_collision(self, lines):  # Gets the closest collision of all lines, returns point + line
+        clpoint = None
+        clline = None
+        cldist = 99999
+
+        for line in lines:
+            col = await self.get_collision_point(line)
+
+            if col:
+                dist = col.distance(Point(self.x, self.y))
+                if dist < cldist:
+                    clpoint = col
+                    cldist = dist
+                    clline = line
+
+        if clpoint:
+            return clpoint, clline
+
+    async def bounce(self, line):  # Returns angle of bounce
         intersectangle = acute_diff(line.get_angle(), self.angle)
 
         return self.angle + intersectangle + 90
 
-    def get_collision_point(self, line):
-        traj = self.get_trajectory()
+    async def get_collision_point(self, line):
+        traj = await self.get_trajectory()
 
         raypoint = traj.intersect(line)
 
@@ -65,9 +82,7 @@ class Ball(object):
             trajangle = self.angle
             wallangle = line.get_angle()
 
-            # intersectangle = 180 - trajangle - (180 - wallangle)
             intersectangle = acute_diff(wallangle, trajangle)
-            # intersectangle = wallangle - trajangle  # Rearranging the above
 
             hyp = self.radius / math.sin(math.radians(intersectangle))
 
@@ -78,7 +93,7 @@ class Ball(object):
 
             return Point(pointx, pointy)
 
-    def get_trajectory(self):
+    async def get_trajectory(self):
 
         # Need to know how many ticks (n) before velocity is low, 0.1
         # Current velocity x friction^n = 0.1
