@@ -12,13 +12,14 @@ class golf(commands.Cog):
         self.game = None
 
     @commands.command()
-    async def test(self, ctx):
+    async def start(self, ctx, name):
         self.game = Game(self.bot)
-        self.game.load("1")
+        self.game.load(name)
 
-        gif = await self.game.start_game()
+        await self.game.start_game()
+        frame = await self.game.for_discord(await self.game.new_frame())
 
-        await ctx.send(file=discord.File(fp=gif, filename='render.gif'))
+        await ctx.send(file=discord.File(fp=frame, filename='render.png'))
 
 
 

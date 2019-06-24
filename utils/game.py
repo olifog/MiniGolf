@@ -29,22 +29,6 @@ class Game(object):
 
     async def start_game(self):
         self.player = Ball(self, self.start.x, self.start.y, 2, 45, 10)
-        await self.new_frame()
-
-        stillframe = None
-
-        for x in range(0, self.totalframes):
-            if self.player.velocity <= 0.1:  # Don't re-render the player if it's not moving
-                if not stillframe:
-                    stillframe = await self.new_frame()
-                else:
-                    self.frames.append(stillframe)
-
-            else:
-                self.player.move()
-                await self.new_frame()
-
-        return await self.render_gif()
 
     async def new_frame(self):
         image = copy.copy(self.base)
@@ -54,6 +38,12 @@ class Game(object):
         self.frames.append(image)
 
         return image
+
+    async def for_discord(self, frame):
+        byteio = BytesIO()
+        frame.save(byteio, format='PNG')
+
+        return BytesIO(byteio.getvalue())
 
     async def render_gif(self):
         byteio = BytesIO()
