@@ -131,7 +131,7 @@ class Line(object):
 
     def draw(self, imagedraw):
         width, height = imagedraw.im.size
-        imagedraw.line([self.p1.x, height - self.p1.y, self.p2.x, height - self.p2.y], fill=256, width=2)
+        imagedraw.line([self.p1.x, height - self.p1.y, self.p2.x, height - self.p2.y], fill=(10, 10, 250, 255), width=2)
 
 
 class Point(object):
