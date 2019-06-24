@@ -28,5 +28,32 @@ class general(commands.Cog):
 
         await ctx.send(embed=e)
 
+    @commands.command()
+    async def invite(self, ctx):
+        """Sends the bot's invite link"""
+        invite = f"https://discordapp.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=314432&scope=bot"
+        message = f"**Here's the invite:**   *(needs the permissions to send images etc.)*\n<{invite}>"
+        await ctx.send(message)
+
+    @commands.command()
+    async def info(self, ctx):
+        """View bot info"""
+        owner = "Moose#0064"
+        invite = f"https://discordapp.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=314432&scope=bot"
+        uptime = humanize.naturaltime(self.bot.uptime)
+        source = "https://github.com/OliMoose/MiniGolf"
+
+        e = discord.Embed(title="MiniGolf", color=discord.Color.blue())
+        e.add_field(name="Owner:", value=owner)
+        e.add_field(name="Invite:", value=f"[Invite here]({invite})")
+        e.add_field(name="Uptime:", value=f"Been up since {uptime}")
+        e.add_field(name="Source:", value=f"{source}")
+        await ctx.send(embed=e)
+
+    @commands.command()
+    async def source(self, ctx):
+        """Sends link to Github source"""
+        await ctx.send("https://github.com/OliMoose/MiniGolf")
+
 def setup(bot):
     bot.add_cog(general(bot))
