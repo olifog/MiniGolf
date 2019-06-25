@@ -5,6 +5,7 @@ from .physics import Ball, Point, Line
 from PIL import Image, ImageDraw
 from io import BytesIO
 import copy
+import math
 import asyncio
 
 
@@ -22,13 +23,48 @@ class Game(object):
         self.base = None
 
         self.framespersecond = 30
-        self.giflength = 6
         self.frames = []
+        self.extraseconds = 2
         self.framelen = 1000 / self.framespersecond
-        self.totalframes = self.framespersecond * self.giflength
 
     async def start_game(self):
         self.player = Ball(self, self.start.x, self.start.y, 2, 45, 10)
+
+    async def getclcol(self):
+        nexthit, nextline = await self.player.get_closest_collision(self.lines)
+
+        dist = 9999
+        if nexthit:
+            dist = self.player.point().distance(nexthit)
+
+        return nexthit, nextline, dist
+
+    async def hit(self):
+        self.frames = []
+        ticks = math.ceil(math.log(0.1 / self.player.velocity, self.friction))  # ticks before ball is stationary
+
+        nexthit, nextline, dist = await self.getclcol()
+
+        dist = 9999
+        if nexthit:
+            dist = self.player.point().distance(nexthit)
+
+        for n in range(0, ticks):
+            if self.player.velocity > dist:
+                self.player.x = nexthit.x
+                self.player.y = nexthit.y
+                self.player.angle = await self.player.bounce(nextline)
+                nexthit, nextline, dist = await self.getclcol()
+                await self.new_frame()
+
+            dist -= self.player.velocity
+            await self.player.move()
+            await self.new_frame()
+
+        for x in range(0, self.extraseconds * self.framespersecond):
+            self.frames.append(self.frames[-1].copy())
+
+        return await self.render_gif()
 
     async def new_frame(self):
         image = copy.copy(self.base)

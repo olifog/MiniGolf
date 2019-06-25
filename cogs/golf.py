@@ -44,6 +44,18 @@ class golf(commands.Cog):
 
         await ctx.send(file=discord.File(fp=await self.game.for_discord(img), filename='render.png'))
 
+    @commands.command()
+    async def hit(self, ctx):
+        stmsg = await ctx.send("Hitting the ball...")
+
+        gif = await self.game.hit()
+
+        await ctx.send(file=discord.File(fp=gif, filename="render.gif"))
+
+        still = await self.game.new_frame()
+        await ctx.send(file=discord.File(fp=await self.game.for_discord(still), filename='render.png'))
+        await stmsg.delete()
+
 
 
 

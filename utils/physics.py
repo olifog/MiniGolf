@@ -45,7 +45,10 @@ class Ball(object):
         self.velocity = velocity
         self.angle = angle
 
-    def move(self):
+    def point(self):
+        return Point(self.x, self.y)
+
+    async def move(self):
         self.x += (self.velocity * math.cos(math.radians(self.angle)))
         self.y += (self.velocity * math.sin(math.radians(self.angle)))
         self.velocity *= self.game.friction
@@ -59,7 +62,7 @@ class Ball(object):
             col = await self.get_collision_point(line)
 
             if col:
-                dist = col.distance(Point(self.x, self.y))
+                dist = col.distance(self.point())
                 if dist < cldist:
                     clpoint = col
                     cldist = dist
@@ -67,11 +70,13 @@ class Ball(object):
 
         if clpoint:
             return clpoint, clline
+        else:
+            return None, None
 
     async def bounce(self, line):  # Returns angle of bounce
         intersectangle = acute_diff(line.get_angle(), self.angle)
 
-        return self.angle + intersectangle + 90
+        return (intersectangle * 2) + self.angle
 
     async def get_collision_point(self, line):
         traj = await self.get_trajectory()
