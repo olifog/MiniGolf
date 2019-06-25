@@ -76,7 +76,13 @@ class Ball(object):
     async def bounce(self, line):  # Returns angle of bounce
         intersectangle = acute_diff(line.get_angle(), self.angle)
 
-        return (intersectangle * 2) + self.angle
+        self.angle = self.angle % 360
+
+        if 90 <= self.angle <= 270:
+            return self.angle - (intersectangle * 2)
+        else:
+            return self.angle + (intersectangle * 2)
+
 
     async def get_collision_point(self, line):
         traj = await self.get_trajectory()

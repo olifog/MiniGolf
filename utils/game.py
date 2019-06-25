@@ -54,6 +54,8 @@ class Game(object):
                 self.player.x = nexthit.x
                 self.player.y = nexthit.y
                 self.player.angle = await self.player.bounce(nextline)
+                self.player.x += ((self.player.velocity - dist) * math.cos(math.radians(self.player.angle)))
+                self.player.y += ((self.player.velocity - dist) * math.sin(math.radians(self.player.angle)))
                 nexthit, nextline, dist = await self.getclcol()
                 await self.new_frame()
 
