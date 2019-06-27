@@ -28,7 +28,7 @@ class Game(object):
         self.framelen = 1000 / self.framespersecond
 
     async def start_game(self):
-        self.player = Ball(self, self.start.x, self.start.y, 2, 45, 10)
+        self.player = Ball(self, self.start.x, self.start.y, 3, 45, 10)
 
     async def getclcol(self):
         nexthit, nextline = await self.player.get_closest_collision(self.lines)
@@ -51,11 +51,25 @@ class Game(object):
 
         for n in range(0, ticks):
             if self.player.velocity > dist:
+                if nextline.goal:
+                    self.player.render = False
+                    await self.new_frame()
+                    break
+
+                if nextline.bad:
+                    self.player.x = self.start.x
+                    self.player.y = self.start.y
+                    self.player.velocity = 0
+                    self.player.angle = 0
+                    await self.new_frame()
+                    break
+
                 self.player.x = nexthit.x
                 self.player.y = nexthit.y
+
                 self.player.angle = await self.player.bounce(nextline)
-                self.player.x += ((self.player.velocity - dist) * math.cos(math.radians(self.player.angle)))
-                self.player.y += ((self.player.velocity - dist) * math.sin(math.radians(self.player.angle)))
+                self.player.x += (self.player.velocity - dist) * math.cos(math.radians(self.player.angle))
+                self.player.y += (self.player.velocity - dist) * math.sin(math.radians(self.player.angle))
                 nexthit, nextline, dist = await self.getclcol()
                 await self.new_frame()
 
@@ -71,8 +85,14 @@ class Game(object):
     async def new_frame(self):
         image = copy.copy(self.base)
         draw = ImageDraw.Draw(image)
+        col, line = await self.player.get_closest_collision(self.lines)
+        traj = await self.player.get_trajectory()
+        traj.draw(draw)
 
         self.player.draw(draw)
+        if line:
+            col.draw(draw)
+            line.draw(draw)
         self.frames.append(image)
 
         return image
@@ -102,9 +122,12 @@ class Game(object):
                 self.start = Point(content[1], content[2])
 
             elif content[0] == "Goal":
-                gl = Line(content[1], content[2], content[3], content[4], True)
+                gl = Line(content[1], content[2], content[3], content[4], goal=True)
                 self.goal = gl
                 self.lines.append(gl)
 
             elif content[0] == "Line":
                 self.lines.append(Line(content[1], content[2], content[3], content[4]))
+
+            elif content[0] == "Bad":
+                self.lines.append(Line(content[1], content[2], content[3], content[4], bad=True))

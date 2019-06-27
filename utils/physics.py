@@ -44,6 +44,7 @@ class Ball(object):
         self.radius = radius
         self.velocity = velocity
         self.angle = angle
+        self.render = True
 
     def point(self):
         return Point(self.x, self.y)
@@ -74,15 +75,17 @@ class Ball(object):
             return None, None
 
     async def bounce(self, line):  # Returns angle of bounce
-        intersectangle = acute_diff(line.get_angle(), self.angle)
-
         self.angle = self.angle % 360
+        wallangle = line.get_angle()
+        intersectangle = acute_diff(wallangle, self.angle)
 
-        if 90 <= self.angle <= 270:
-            return self.angle - (intersectangle * 2)
-        else:
+        if max(self.angle, wallangle) + intersectangle >= 360:
+            intersectangle *= -1
+
+        if wallangle > self.angle:
             return self.angle + (intersectangle * 2)
-
+        else:
+            return self.angle - (intersectangle * 2)
 
     async def get_collision_point(self, line):
         traj = await self.get_trajectory()
@@ -90,7 +93,7 @@ class Ball(object):
         raypoint = traj.intersect(line)
 
         if str(raypoint) != "GEOMETRYCOLLECTION EMPTY":
-            trajangle = self.angle
+            trajangle = self.angle % 360
             wallangle = line.get_angle()
 
             intersectangle = acute_diff(wallangle, trajangle)
@@ -128,16 +131,18 @@ class Ball(object):
         return Line(self.x, self.y, endx, endy)
 
     def draw(self, imagedraw):
-        width, height = imagedraw.im.size
-        x = self.x
-        y = height - self.y
-        r = self.radius
-        imagedraw.ellipse((x-r, y-r, x+r, y+r), fill=(220, 20, 60, 255))
+        if self.render:
+            width, height = imagedraw.im.size
+            x = self.x
+            y = height - self.y
+            r = self.radius
+            imagedraw.ellipse((x-r, y-r, x+r, y+r), fill=(220, 20, 60, 255))
 
 
 class Line(object):
-    def __init__(self, x1, y1, x2, y2, goal=False):
+    def __init__(self, x1, y1, x2, y2, goal=False, bad=False):
         self.goal = goal
+        self.bad = bad
 
         self.p1 = Point(x1, y1)
         self.p2 = Point(x2, y2)
