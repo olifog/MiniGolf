@@ -38,6 +38,7 @@ class MiniGolf(commands.AutoShardedBot):
         await self.wait_until_ready()
 
     async def on_ready(self):
+        self.remove_command('help')
 
         for cog in os.listdir("cogs"):
             try:

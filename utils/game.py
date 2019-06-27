@@ -11,10 +11,13 @@ import asyncio
 
 class Game(object):
 
-    def __init__(self, bot, friction=0.95):
+    def __init__(self, bot, playerid, friction=0.97):
         self.bot = bot
         self.lines = []
         self.friction = friction
+        self.playerid = playerid
+        self.hits = 0
+        self.levels = 0
 
         self.start = None
         self.goal = None
@@ -40,6 +43,7 @@ class Game(object):
         return nexthit, nextline, dist
 
     async def hit(self):
+        self.hits += 1
         self.frames = []
         ticks = math.ceil(math.log(0.1 / self.player.velocity, self.friction))  # ticks before ball is stationary
 
@@ -53,6 +57,7 @@ class Game(object):
             if self.player.velocity > dist:
                 if nextline.goal:
                     self.player.render = False
+                    self.levels += 1
                     await self.new_frame()
                     break
 
@@ -85,14 +90,8 @@ class Game(object):
     async def new_frame(self):
         image = copy.copy(self.base)
         draw = ImageDraw.Draw(image)
-        col, line = await self.player.get_closest_collision(self.lines)
-        traj = await self.player.get_trajectory()
-        traj.draw(draw)
 
         self.player.draw(draw)
-        if line:
-            col.draw(draw)
-            line.draw(draw)
         self.frames.append(image)
 
         return image
@@ -111,6 +110,7 @@ class Game(object):
         return BytesIO(byteio.getvalue())
 
     def load(self, levelname):
+        self.lines = []
         self.source = "./levels/" + str(levelname) + "/" + str(levelname)
         self.base = Image.open(self.source + "Base.png")
         lines = open(self.source + "Lines.txt", "r").readlines()

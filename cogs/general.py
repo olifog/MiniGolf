@@ -55,5 +55,9 @@ class general(commands.Cog):
         """Sends link to Github source"""
         await ctx.send("https://github.com/OliMoose/MiniGolf")
 
+    @commands.command()
+    async def help(self, ctx):
+        await ctx.send("**Hey! To play the game, please use `mg!start`.**\nOther commands: info, invite, ping")
+
 def setup(bot):
     bot.add_cog(general(bot))
