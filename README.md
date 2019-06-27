@@ -9,11 +9,11 @@ To localhost it (if you need to) just replace 'token' with a bot token in ./data
 
 
 Dependencies:
-discord.py library
-aiohttp
-shapely
-PIL (Python Image Library)
-numpy
+discord.py library,
+aiohttp,
+shapely,
+PIL (Python Image Library),
+numpy,
 humanize
 
 - and a bunch of other inbuilt modules
