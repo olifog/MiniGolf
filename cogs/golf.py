@@ -80,6 +80,7 @@ class golf(commands.Cog):  # Game commands
             await stmsg.delete()
         else:
             if game.levels == self.levels:  # If the player's completed the whole course
+                self.games.pop(ctx.author.id, None)
                 await ctx.send("You completed the entire course in " + str(game.hits) + " hits! Yayyy\nNow get your friends to see if they can beat you!")
                 return
 
