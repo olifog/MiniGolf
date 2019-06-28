@@ -4,15 +4,14 @@ from discord.ext import commands
 from datetime import datetime
 import humanize
 
-class general(commands.Cog):
-    """General commands"""
+
+class general(commands.Cog):  # General commands
 
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    async def ping(self, ctx):
-        """Check the ping and latency of the bot"""
+    async def ping(self, ctx):  # Check the ping and latency of the bot
         process_time = round(((datetime.utcnow() - ctx.message.created_at).total_seconds()) * 1000)
         e = discord.Embed(color=discord.Color.blue())
 
@@ -29,15 +28,13 @@ class general(commands.Cog):
         await ctx.send(embed=e)
 
     @commands.command()
-    async def invite(self, ctx):
-        """Sends the bot's invite link"""
+    async def invite(self, ctx):  # Sends the bot's invite link
         invite = f"https://discordapp.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=314432&scope=bot"
         message = f"**Here's the invite:**   *(needs the permissions to send images etc.)*\n<{invite}>"
         await ctx.send(message)
 
     @commands.command()
-    async def info(self, ctx):
-        """View bot info"""
+    async def info(self, ctx):  # View bot info
         owner = "Moose#0064"
         invite = f"https://discordapp.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=314432&scope=bot"
         uptime = humanize.naturaltime(self.bot.uptime)
@@ -51,13 +48,13 @@ class general(commands.Cog):
         await ctx.send(embed=e)
 
     @commands.command()
-    async def source(self, ctx):
-        """Sends link to Github source"""
+    async def source(self, ctx):  # Sends link to Github source"
         await ctx.send("https://github.com/OliMoose/MiniGolf")
 
     @commands.command()
-    async def help(self, ctx):
-        await ctx.send("**Hey! To play the game, please use `mg!start`.**\nOther commands: info, invite, ping")
+    async def help(self, ctx):  # Simple help message
+        await ctx.send("**Hey! To play the game, please use `mg!start`.**\nOther commands: info, invite, ping, source")
+
 
 def setup(bot):
     bot.add_cog(general(bot))
