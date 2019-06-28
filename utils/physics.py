@@ -147,7 +147,7 @@ class Ball(object):  # The player's ball object
             x = self.x
             y = height - self.y
             r = self.radius
-            imagedraw.ellipse((x-r, y-r, x+r, y+r), fill=(220, 20, 60, 255))
+            imagedraw.ellipse((x-r, y-r, x+r, y+r), fill=(255, 255, 255, 255))
 
 
 class Line(object):  # Object representing a line in the game world
@@ -173,7 +173,7 @@ class Line(object):  # Object representing a line in the game world
 
     def draw(self, imagedraw):  # Draw the line, only currently used in the aim command- used it a lot in debugging
         width, height = imagedraw.im.size
-        imagedraw.line([self.p1.x, height - self.p1.y, self.p2.x, height - self.p2.y], fill=(255, 255, 255, 255), width=2)
+        imagedraw.line([self.p1.x, height - self.p1.y, self.p2.x, height - self.p2.y], fill=(10, 10, 255, 255), width=2)
 
 
 class Point(object):  # Simple object to represent a point in space
