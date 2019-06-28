@@ -1,4 +1,6 @@
 # MiniGolf
+![](./data/demo.gif)
+
 This is a Discord MiniGolf bot, made for the Discord Hack Week. To see more, invite the bot and use the command 'mg!help'
 
 I started writing as soon as the week started, but put it up on github at the end of Day 1- that's why the first few commits were so fast!
