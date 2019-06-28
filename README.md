@@ -1,5 +1,5 @@
 # MiniGolf
-![](./data/demo.gif)
+![](./data/cooldemo.gif)
 
 This is a Discord MiniGolf bot, made for the Discord Hack Week. To see more, invite the bot and use the command 'mg!help'
 
